@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher | رمزگذاری سزار</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a2e;
+            --border: #2a2a3e;
+            --primary: #6c63ff;
+            --primary-glow: #6c63ff40;
+            --accent: #00d4aa;
+            --accent-glow: #00d4aa30;
+            --text: #e8e8f0;
+            --text-dim: #8888a0;
+            --danger: #ff6b6b;
+            --warning: #ffd93d;
+            --radius: 16px;
+            --shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+        }
+        
+        .bg-glow {
+            position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            z-index: 0; pointer-events: none;
+        }
+        
+        .container {
+            position: relative; z-index: 1;
+            max-width: 900px; margin: 0 auto; padding: 20px 16px 40px;
+        }
+        
+        header {
+            text-align: center; padding: 40px 0 30px;
+        }
+        
+        .logo {
+            font-size: 48px; margin-bottom: 8px;
+            filter: drop-shadow(0 0 20px var(--primary-glow));
+        }
+        
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: var(--text-dim); font-size: 0.95rem; font-weight: 300;
+        }
+        
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            transition: border-color 0.3s;
+        }
+        
+        .card:hover { border-color: var(--primary); }
+        
+        .card-title {
+            font-size: 0.85rem; font-weight: 600;
+            color: var(--accent); text-transform: uppercase;
+            letter-spacing: 1.5px; margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        
+        textarea {
+            width: 100%; min-height: 120px; padding: 16px;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text);
+            font-family: 'Inter', monospace; font-size: 1rem;
+            resize: vertical; outline: none; direction: ltr;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        
+        textarea::placeholder { color: var(--text-dim); }
+        
+        .controls {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 600px) {
+            .controls { grid-template-columns: 1fr; }
+        }
+        
+        .control-group label {
+            display: block; font-size: 0.8rem; font-weight: 600;
+            color: var(--text-dim); text-transform: uppercase;
+            letter-spacing: 1px; margin-bottom: 8px;
+        }
+        
+        .shift-control {
+            display: flex; align-items: center; gap: 12px;
+        }
+        
+        .shift-slider {
+            flex: 1; -webkit-appearance: none; appearance: none;
+            height: 6px; background: var(--surface2);
+            border-radius: 3px; outline: none;
+        }
+        
+        .shift-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 24px; height: 24px; border-radius: 50%;
+            background: var(--primary); cursor: pointer;
+            box-shadow: 0 0 12px var(--primary-glow);
+            transition: transform 0.2s;
+        }
+        
+        .shift-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        
+        .shift-value {
+            min-width: 50px; text-align: center;
+            font-size: 1.5rem; font-weight: 800;
+            color: var(--primary);
+            background: var(--surface2); padding: 4px 12px;
+            border-radius: 8px; border: 1px solid var(--border);
+        }
+        
+        select {
+            width: 100%; padding: 12px 16px;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 12px; color: var(--text);
+            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            cursor: pointer; outline: none;
+        }
+        
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+        
+        .btn-row {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px; margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 14px 20px; border: none; border-radius: 12px;
+            font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #5a52e0);
+            color: white; box-shadow: 0 4px 20px var(--primary-glow);
+        }
+        
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px var(--primary-glow); }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, var(--accent), #00b894);
+            color: #0a0a0f; box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        
+        .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 6px 28px var(--accent-glow); }
+        
+        .btn-outline {
+            background: transparent; border: 1px solid var(--border);
+            color: var(--text-dim);
+        }
+        
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        
+        .btn-danger {
+            background: transparent; border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+        
+        .btn-danger:hover { background: var(--danger); color: white; }
+        
+        .result-section { position: relative; }
+        
+        #output {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 12px; padding: 16px; min-height: 100px;
+            font-family: 'Inter', monospace; font-size: 1rem;
+            color: var(--accent); direction: ltr; text-align: left;
+            white-space: pre-wrap; word-break: break-all;
+            position: relative;
+        }
+        
+        .copy-toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: var(--accent); color: var(--bg);
+            padding: 12px 24px; border-radius: 12px;
+            font-weight: 600; font-size: 0.9rem;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+        }
+        
+        .copy-toast.show { transform: translateX(-50%) translateY(0); }
+        
+        .alphabet-display {
+            display: flex; flex-wrap: wrap; gap: 6px;
+            margin-top: 16px; justify-content: center;
+        }
+        
+        .alpha-box {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 8px; font-weight: 700; font-size: 0.85rem;
+            transition: all 0.3s; position: relative;
+        }
+        
+        .alpha-box.active {
+            border-color: var(--primary); background: var(--primary);
+            color: white; box-shadow: 0 0 12px var(--primary-glow);
+        }
+        
+        .alpha-box .mapped {
+            position: absolute; bottom: -16px; font-size: 0.65rem;
+            color: var(--accent); font-weight: 600;
+        }
+        
+        .stats {
+            display: flex; gap: 16px; flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        
+        .stat {
+            background: var(--surface2); border: 1px solid var(--border);
+            border-radius: 10px; padding: 12px 16px;
+            flex: 1; min-width: 120px; text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.4rem; font-weight: 800; color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.7rem; color: var(--text-dim);
+            text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;
+        }
+        
+        .brute-section {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px;
+            margin-top: 20px; display: none;
+        }
+        
+        .brute-section.show { display: block; }
+        
+        .brute-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 14px; border-radius: 10px;
+            margin-bottom: 6px; cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .brute-item:hover { background: var(--surface2); }
+        
+        .brute-shift {
+            min-width: 40px; font-weight: 800; color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .brute-text {
+            color: var(--text-dim); font-family: monospace;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        
+        footer {
+            text-align: center; padding: 30px 0 10px;
+            color: var(--text-dim); font-size: 0.8rem;
+        }
+        
+        footer a { color: var(--primary); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">🔐</div>
+            <h1>Caesar Cipher</h1>
+            <p class="subtitle">رمزگذاری و رمزگشایی سزار — با قابلیت حمله Brute Force</p>
+        </header>
+        
+        <div class="card">
+            <div class="card-title">📝 متن ورودی</div>
+            <textarea id="input" placeholder="متن خود را اینجا بنویسید... / Enter your text here..."></textarea>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">⚙️ تنظیمات</div>
+            <div class="controls">
+                <div class="control-group">
+                    <label>جابجایی (Shift)</label>
+                    <div class="shift-control">
+                        <input type="range" class="shift-slider" id="shiftSlider" min="1" max="25" value="3">
+                        <div class="shift-value" id="shiftValue">3</div>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>حالت</label>
+                    <select id="mode">
+                        <option value="encode">🔒 رمزگذاری (Encode)</option>
+                        <option value="decode">🔓 رمزگشایی (Decode)</option>
+                        <option value="brute">💥 حمله Brute Force</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <div class="btn-row">
+            <button class="btn btn-primary" onclick="process()">⚡ اجرا</button>
+            <button class="btn btn-accent" onclick="copyResult()">📋 کپی</button>
+            <button class="btn btn-outline" onclick="swapIO()">🔄 تبادل</button>
+            <button class="btn btn-danger" onclick="clearAll()">🗑 پاک کردن</button>
+        </div>
+        
+        <div class="card result-section">
+            <div class="card-title">📤 خروجی</div>
+            <div id="output">نتیجه اینجا نمایش داده می‌شود...</div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">📊 آمار</div>
+            <div class="stats">
+                <div class="stat"><div class="stat-value" id="statChars">0</div><div class="stat-label">کاراکتر</div></div>
+                <div class="stat"><div class="stat-value" id="statWords">0</div><div class="stat-label">کلمه</div></div>
+                <div class="stat"><div class="stat-value" id="statShift">3</div><div class="stat-label">جابجایی</div></div>
+            </div>
+            <div class="alphabet-display" id="alphaDisplay"></div>
+        </div>
+        
+        <div class="brute-section card" id="bruteSection">
+            <div class="card-title">💥 نتایج Brute Force</div>
+            <div id="bruteResults"></div>
+        </div>
+        
+        <footer>
+            ساخته شده با ❤️ توسط <a href="#">Hermes Agent</a> | Caesar Cipher Tool
+        </footer>
+    </div>
+    
+    <div class="copy-toast" id="toast">✅ کپی شد!</div>
+
+    <script>
+    'use strict';
+    
+    const $ = id => document.getElementById(id);
+    const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    
+    // Shift slider
+    const slider = $('shiftSlider');
+    const shiftDisplay = $('shiftValue');
+    slider.oninput = () => {
+        shiftDisplay.textContent = slider.value;
+        $('statShift').textContent = slider.value;
+        updateAlphaDisplay();
+    };
+    
+    // Mode change - show/hide brute section
+    $('mode').onchange = () => {
+        $('bruteSection').classList.toggle('show', $('mode').value === 'brute');
+    };
+    
+    // Core Caesar cipher - optimized with char codes
+    function caesar(text, shift, decode = false) {
+        if (decode) shift = (26 - shift) % 26;
+        const result = [];
+        for (let i = 0; i < text.length; i++) {
+            const c = text.charCodeAt(i);
+            if (c >= 65 && c <= 90) {
+                result.push(String.fromCharCode(((c - 65 + shift) % 26) + 65));
+            } else if (c >= 97 && c <= 122) {
+                result.push(String.fromCharCode(((c - 97 + shift) % 26) + 97));
+            } else {
+                result.push(text[i]);
+            }
+        }
+        return result.join('');
+    }
+    
+    // Brute force all 25 shifts
+    function bruteForce(text) {
+        const results = [];
+        for (let s = 1; s <= 25; s++) {
+            results.push({ shift: s, text: caesar(text, s, true) });
+        }
+        return results;
+    }
+    
+    // English word frequency for scoring
+    const COMMON_WORDS = new Set(['the','is','are','was','were','be','been','have','has','had','do','does','did','will','would','could','should','may','might','can','shall','not','and','or','but','if','then','else','for','to','of','in','on','at','by','with','from','as','this','that','it','he','she','we','they','you','i','me','my','your','his','her','our','their']);
+    
+    function scoreText(text) {
+        const words = text.toLowerCase().split(/\s+/);
+        return words.reduce((s, w) => s + (COMMON_WORDS.has(w) ? 2 : 0), 0) + 
+               (text.match(/[.,!?;:]/g) || []).length;
+    }
+    
+    // Process
+    function process() {
+        const text = $('input').value;
+        if (!text.trim()) return;
+        
+        const shift = parseInt(slider.value);
+        const mode = $('mode').value;
+        
+        if (mode === 'brute') {
+            const results = bruteForce(text.toUpperCase() === text ? text.toUpperCase() : text);
+            const sorted = results.sort((a, b) => scoreText(b.text) - scoreText(a.text));
+            $('output').textContent = sorted[0].text;
+            $('bruteResults').innerHTML = sorted.map(r => 
+                `<div class="brute-item" onclick="useBruteResult(${r.shift})">
+                    <span class="brute-shift">+${r.shift}</span>
+                    <span class="brute-text">${escHtml(r.text)}</span>
+                </div>`
+            ).join('');
+            $('bruteSection').classList.add('show');
+        } else {
+            const isDecode = mode === 'decode';
+            $('output').textContent = caesar(text, shift, isDecode);
+            $('bruteSection').classList.remove('show');
+        }
+        
+        updateStats(text);
+    }
+    
+    function useBruteResult(shift) {
+        slider.value = shift;
+        shiftDisplay.textContent = shift;
+        $('statShift').textContent = shift;
+        $('mode').value = 'decode';
+        $('bruteSection').classList.remove('show');
+        process();
+    }
+    
+    function updateStats(text) {
+        $('statChars').textContent = text.length;
+        $('statWords').textContent = text.trim().split(/\s+/).filter(Boolean).length;
+        updateAlphaDisplay();
+    }
+    
+    function updateAlphaDisplay() {
+        const shift = parseInt(slider.value);
+        $('alphaDisplay').innerHTML = ALPHABET.split('').map((c, i) => {
+            const mapped = String.fromCharCode(((i + shift) % 26) + 65);
+            return `<div class="alpha-box ${i < 3 ? 'active' : ''}">${c}<span class="mapped">${mapped}</span></div>`;
+        }).join('');
+    }
+    
+    function copyResult() {
+        const text = $('output').textContent;
+        if (!text || text.startsWith('نتیجه')) return;
+        navigator.clipboard.writeText(text).then(() => {
+            const t = $('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        });
+    }
+    
+    function swapIO() {
+        const output = $('output').textContent;
+        if (output && !output.startsWith('نتیجه')) {
+            $('input').value = output;
+            $('output').textContent = 'نتیجه اینجا نمایش داده می‌شود...';
+        }
+    }
+    
+    function clearAll() {
+        $('input').value = '';
+        $('output').textContent = 'نتیجه اینجا نمایش داده می‌شود...';
+        $('statChars').textContent = '0';
+        $('statWords').textContent = '0';
+        $('bruteSection').classList.remove('show');
+    }
+    
+    function escHtml(s) {
+        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    
+    // Keyboard shortcut
+    document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') process();
+    });
+    
+    // Init
+    updateAlphaDisplay();
+    </script>
+</body>
+</html>
