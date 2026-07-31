@@ -24,6 +24,21 @@
             --shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
         
+        .light {
+            --bg: #f0f2f5;
+            --surface: #ffffff;
+            --surface2: #f5f6fa;
+            --border: #dde0e8;
+            --primary: #5a52e0;
+            --primary-glow: #5a52e025;
+            --accent: #00b894;
+            --accent-glow: #00b89420;
+            --text: #1a1a2e;
+            --text-dim: #6b7280;
+            --danger: #e74c3c;
+            --shadow: 0 8px 32px rgba(0,0,0,0.08);
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -32,15 +47,16 @@
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background 0.4s, color 0.4s;
         }
         
         .bg-grid {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-image: 
-                linear-gradient(rgba(108,99,255,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(108,99,255,0.03) 1px, transparent 1px);
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
             background-size: 50px 50px;
-            z-index: 0;
+            opacity: 0.15; z-index: 0;
         }
         
         .bg-glow {
@@ -72,26 +88,31 @@
             margin-bottom: 8px;
         }
         
-        .subtitle {
-            color: var(--text-dim); font-size: 0.95rem; font-weight: 300;
+        .subtitle { color: var(--text-dim); font-size: 0.95rem; font-weight: 300; }
+        
+        .theme-toggle {
+            position: fixed; top: 20px; left: 20px; z-index: 100;
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--surface); border: 1px solid var(--border);
+            font-size: 22px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; box-shadow: var(--shadow);
         }
         
+        .theme-toggle:hover { transform: scale(1.1); border-color: var(--primary); }
+        
         .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-            transition: border-color 0.3s;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 24px;
+            margin-bottom: 20px; box-shadow: var(--shadow);
+            transition: border-color 0.3s, background 0.4s;
         }
         
         .card:hover { border-color: var(--primary); }
         
         .card-title {
-            font-size: 0.85rem; font-weight: 600;
-            color: var(--accent); text-transform: uppercase;
-            letter-spacing: 1.5px; margin-bottom: 16px;
+            font-size: 0.85rem; font-weight: 600; color: var(--accent);
+            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px;
             display: flex; align-items: center; gap: 8px;
         }
         
@@ -101,7 +122,7 @@
             border-radius: 12px; color: var(--text);
             font-family: 'Inter', monospace; font-size: 1rem;
             resize: vertical; outline: none; direction: ltr;
-            transition: border-color 0.3s, box-shadow 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.4s;
         }
         
         textarea:focus {
@@ -112,13 +133,10 @@
         textarea::placeholder { color: var(--text-dim); }
         
         .controls {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-            margin: 20px 0;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 20px 0;
         }
         
-        @media (max-width: 600px) {
-            .controls { grid-template-columns: 1fr; }
-        }
+        @media (max-width: 600px) { .controls { grid-template-columns: 1fr; } }
         
         .control-group label {
             display: block; font-size: 0.8rem; font-weight: 600;
@@ -126,32 +144,25 @@
             letter-spacing: 1px; margin-bottom: 8px;
         }
         
-        .shift-control {
-            display: flex; align-items: center; gap: 12px;
-        }
+        .shift-control { display: flex; align-items: center; gap: 12px; }
         
         .shift-slider {
             flex: 1; -webkit-appearance: none; appearance: none;
-            height: 6px; background: var(--surface2);
-            border-radius: 3px; outline: none;
+            height: 6px; background: var(--surface2); border-radius: 3px; outline: none;
         }
         
         .shift-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 24px; height: 24px; border-radius: 50%;
+            -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
             background: var(--primary); cursor: pointer;
             box-shadow: 0 0 12px var(--primary-glow);
-            transition: transform 0.2s;
         }
         
         .shift-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
         
         .shift-value {
-            min-width: 50px; text-align: center;
-            font-size: 1.5rem; font-weight: 800;
-            color: var(--primary);
-            background: var(--surface2); padding: 4px 12px;
-            border-radius: 8px; border: 1px solid var(--border);
+            min-width: 50px; text-align: center; font-size: 1.5rem; font-weight: 800;
+            color: var(--primary); background: var(--surface2);
+            padding: 4px 12px; border-radius: 8px; border: 1px solid var(--border);
         }
         
         select {
@@ -162,10 +173,7 @@
             cursor: pointer; outline: none;
         }
         
-        select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-glow);
-        }
+        select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
         
         .btn-row {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -184,30 +192,26 @@
             color: white; box-shadow: 0 4px 20px var(--primary-glow);
         }
         
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 28px var(--primary-glow); }
+        .btn-primary:hover { transform: translateY(-2px); }
         
         .btn-accent {
             background: linear-gradient(135deg, var(--accent), #00b894);
             color: #0a0a0f; box-shadow: 0 4px 20px var(--accent-glow);
         }
         
-        .btn-accent:hover { transform: translateY(-2px); box-shadow: 0 6px 28px var(--accent-glow); }
+        .btn-accent:hover { transform: translateY(-2px); }
         
         .btn-outline {
-            background: transparent; border: 1px solid var(--border);
-            color: var(--text-dim);
+            background: transparent; border: 1px solid var(--border); color: var(--text-dim);
         }
         
         .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
         
         .btn-danger {
-            background: transparent; border: 1px solid var(--danger);
-            color: var(--danger);
+            background: transparent; border: 1px solid var(--danger); color: var(--danger);
         }
         
         .btn-danger:hover { background: var(--danger); color: white; }
-        
-        .result-section { position: relative; }
         
         #output {
             background: var(--surface2); border: 1px solid var(--border);
@@ -215,11 +219,12 @@
             font-family: 'Inter', monospace; font-size: 1rem;
             color: var(--accent); direction: ltr; text-align: left;
             white-space: pre-wrap; word-break: break-all;
-            position: relative;
+            transition: background 0.4s;
         }
         
         .copy-toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
             background: var(--accent); color: var(--bg);
             padding: 12px 24px; border-radius: 12px;
             font-weight: 600; font-size: 0.9rem;
@@ -230,8 +235,7 @@
         .copy-toast.show { transform: translateX(-50%) translateY(0); }
         
         .alphabet-display {
-            display: flex; flex-wrap: wrap; gap: 6px;
-            margin-top: 16px; justify-content: center;
+            display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; justify-content: center;
         }
         
         .alpha-box {
@@ -252,10 +256,7 @@
             color: var(--accent); font-weight: 600;
         }
         
-        .stats {
-            display: flex; gap: 16px; flex-wrap: wrap;
-            margin-top: 16px;
-        }
+        .stats { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px; }
         
         .stat {
             background: var(--surface2); border: 1px solid var(--border);
@@ -263,9 +264,7 @@
             flex: 1; min-width: 120px; text-align: center;
         }
         
-        .stat-value {
-            font-size: 1.4rem; font-weight: 800; color: var(--primary);
-        }
+        .stat-value { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
         
         .stat-label {
             font-size: 0.7rem; color: var(--text-dim);
@@ -274,29 +273,36 @@
         
         .brute-section {
             background: var(--surface); border: 1px solid var(--border);
-            border-radius: var(--radius); padding: 24px;
-            margin-top: 20px; display: none;
+            border-radius: var(--radius); padding: 24px; margin-top: 20px; display: none;
         }
         
         .brute-section.show { display: block; }
         
         .brute-item {
             display: flex; align-items: center; gap: 12px;
-            padding: 10px 14px; border-radius: 10px;
-            margin-bottom: 6px; cursor: pointer;
-            transition: background 0.2s;
+            padding: 10px 14px; border-radius: 10px; margin-bottom: 6px;
+            cursor: pointer; transition: background 0.2s;
         }
         
         .brute-item:hover { background: var(--surface2); }
         
-        .brute-shift {
-            min-width: 40px; font-weight: 800; color: var(--primary);
-            font-size: 1.1rem;
+        .brute-shift { min-width: 40px; font-weight: 800; color: var(--primary); font-size: 1.1rem; }
+        
+        .brute-text { color: var(--text-dim); font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        
+        .live-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #00d4aa20; color: var(--accent); font-size: 0.75rem;
+            padding: 4px 10px; border-radius: 20px; font-weight: 600;
         }
         
-        .brute-text {
-            color: var(--text-dim); font-family: monospace;
-            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        .live-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--accent); animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
         }
         
         footer {
@@ -312,16 +318,18 @@
     <div class="bg-grid"></div>
     <div class="bg-glow"></div>
     
+    <button class="theme-toggle" id="themeBtn" onclick="toggleTheme()" title="تغییر تم">🌙</button>
+    
     <div class="container">
         <header>
             <div class="logo">🔐</div>
             <h1>Caesar Cipher</h1>
-            <p class="subtitle">رمزگذاری و رمزگشایی سزار — با قابلیت حمله Brute Force</p>
+            <p class="subtitle">رمزگذاری و رمزگشایی سزار — لحظه‌ای و آنی <span class="live-badge"><span class="live-dot"></span>LIVE</span></p>
         </header>
         
         <div class="card">
             <div class="card-title">📝 متن ورودی</div>
-            <textarea id="input" placeholder="متن خود را اینجا بنویسید... / Enter your text here..."></textarea>
+            <textarea id="input" placeholder="متن خود را اینجا بنویسید... همزمان رمزگذاری می‌شود!"></textarea>
         </div>
         
         <div class="card">
@@ -352,7 +360,7 @@
             <button class="btn btn-danger" onclick="clearAll()">🗑 پاک کردن</button>
         </div>
         
-        <div class="card result-section">
+        <div class="card">
             <div class="card-title">📤 خروجی</div>
             <div id="output">نتیجه اینجا نمایش داده می‌شود...</div>
         </div>
@@ -385,6 +393,14 @@
     const $ = id => document.getElementById(id);
     const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     
+    // Theme toggle
+    let isDark = true;
+    function toggleTheme() {
+        isDark = !isDark;
+        document.documentElement.classList.toggle('light', !isDark);
+        $('themeBtn').textContent = isDark ? '🌙' : '☀️';
+    }
+    
     // Shift slider
     const slider = $('shiftSlider');
     const shiftDisplay = $('shiftValue');
@@ -392,61 +408,35 @@
         shiftDisplay.textContent = slider.value;
         $('statShift').textContent = slider.value;
         updateAlphaDisplay();
+        liveProcess();
     };
     
-    // Mode change - show/hide brute section
+    // Mode change
     $('mode').onchange = () => {
         $('bruteSection').classList.toggle('show', $('mode').value === 'brute');
+        liveProcess();
     };
     
-    // Core Caesar cipher - optimized with char codes
-    function caesar(text, shift, decode = false) {
-        if (decode) shift = (26 - shift) % 26;
-        const result = [];
-        for (let i = 0; i < text.length; i++) {
-            const c = text.charCodeAt(i);
-            if (c >= 65 && c <= 90) {
-                result.push(String.fromCharCode(((c - 65 + shift) % 26) + 65));
-            } else if (c >= 97 && c <= 122) {
-                result.push(String.fromCharCode(((c - 97 + shift) % 26) + 97));
-            } else {
-                result.push(text[i]);
-            }
-        }
-        return result.join('');
-    }
+    // Live typing - process on every input
+    $('input').addEventListener('input', liveProcess);
     
-    // Brute force all 25 shifts
-    function bruteForce(text) {
-        const results = [];
-        for (let s = 1; s <= 25; s++) {
-            results.push({ shift: s, text: caesar(text, s, true) });
-        }
-        return results;
-    }
-    
-    // English word frequency for scoring
-    const COMMON_WORDS = new Set(['the','is','are','was','were','be','been','have','has','had','do','does','did','will','would','could','should','may','might','can','shall','not','and','or','but','if','then','else','for','to','of','in','on','at','by','with','from','as','this','that','it','he','she','we','they','you','i','me','my','your','his','her','our','their']);
-    
-    function scoreText(text) {
-        const words = text.toLowerCase().split(/\s+/);
-        return words.reduce((s, w) => s + (COMMON_WORDS.has(w) ? 2 : 0), 0) + 
-               (text.match(/[.,!?;:]/g) || []).length;
-    }
-    
-    // Process
-    function process() {
+    function liveProcess() {
         const text = $('input').value;
-        if (!text.trim()) return;
+        if (!text.trim()) {
+            $('output').textContent = 'نتیجه اینجا نمایش داده می‌شود...';
+            $('statChars').textContent = '0';
+            $('statWords').textContent = '0';
+            return;
+        }
         
         const shift = parseInt(slider.value);
         const mode = $('mode').value;
         
         if (mode === 'brute') {
-            const results = bruteForce(text.toUpperCase() === text ? text.toUpperCase() : text);
+            const results = bruteForce(text);
             const sorted = results.sort((a, b) => scoreText(b.text) - scoreText(a.text));
             $('output').textContent = sorted[0].text;
-            $('bruteResults').innerHTML = sorted.map(r => 
+            $('bruteResults').innerHTML = sorted.map(r =>
                 `<div class="brute-item" onclick="useBruteResult(${r.shift})">
                     <span class="brute-shift">+${r.shift}</span>
                     <span class="brute-text">${escHtml(r.text)}</span>
@@ -459,8 +449,37 @@
             $('bruteSection').classList.remove('show');
         }
         
-        updateStats(text);
+        $('statChars').textContent = text.length;
+        $('statWords').textContent = text.trim().split(/\s+/).filter(Boolean).length;
     }
+    
+    // Core Caesar cipher - optimized with char codes
+    function caesar(text, shift, decode) {
+        if (decode) shift = (26 - shift) % 26;
+        const r = [];
+        for (let i = 0; i < text.length; i++) {
+            const c = text.charCodeAt(i);
+            if (c >= 65 && c <= 90) r.push(String.fromCharCode(((c - 65 + shift) % 26) + 65));
+            else if (c >= 97 && c <= 122) r.push(String.fromCharCode(((c - 97 + shift) % 26) + 97));
+            else r.push(text[i]);
+        }
+        return r.join('');
+    }
+    
+    function bruteForce(text) {
+        const results = [];
+        for (let s = 1; s <= 25; s++) results.push({ shift: s, text: caesar(text, s, true) });
+        return results;
+    }
+    
+    const COMMON_WORDS = new Set(['the','is','are','was','were','be','been','have','has','had','do','does','did','will','would','could','should','may','might','can','shall','not','and','or','but','if','then','else','for','to','of','in','on','at','by','with','from','as','this','that','it','he','she','we','they','you','i','me','my','your','his','her','our','their']);
+    
+    function scoreText(text) {
+        return text.toLowerCase().split(/\s+/).reduce((s, w) => s + (COMMON_WORDS.has(w) ? 2 : 0), 0) +
+               (text.match(/[.,!?;:]/g) || []).length;
+    }
+    
+    function process() { liveProcess(); }
     
     function useBruteResult(shift) {
         slider.value = shift;
@@ -468,13 +487,7 @@
         $('statShift').textContent = shift;
         $('mode').value = 'decode';
         $('bruteSection').classList.remove('show');
-        process();
-    }
-    
-    function updateStats(text) {
-        $('statChars').textContent = text.length;
-        $('statWords').textContent = text.trim().split(/\s+/).filter(Boolean).length;
-        updateAlphaDisplay();
+        liveProcess();
     }
     
     function updateAlphaDisplay() {
@@ -489,8 +502,7 @@
         const text = $('output').textContent;
         if (!text || text.startsWith('نتیجه')) return;
         navigator.clipboard.writeText(text).then(() => {
-            const t = $('toast');
-            t.classList.add('show');
+            const t = $('toast'); t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2000);
         });
     }
@@ -499,7 +511,7 @@
         const output = $('output').textContent;
         if (output && !output.startsWith('نتیجه')) {
             $('input').value = output;
-            $('output').textContent = 'نتیجه اینجا نمایش داده می‌شود...';
+            liveProcess();
         }
     }
     
@@ -511,16 +523,8 @@
         $('bruteSection').classList.remove('show');
     }
     
-    function escHtml(s) {
-        return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    }
+    function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     
-    // Keyboard shortcut
-    document.addEventListener('keydown', e => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') process();
-    });
-    
-    // Init
     updateAlphaDisplay();
     </script>
 </body>
